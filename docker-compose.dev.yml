@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+  web:
+    build:
+      args:
+        BUILD_DEV: 1
+    environment:
+      PHP_IDE_CONFIG: serverName=peshtaxta
+      XDEBUG_MODE: ${XDEBUG_MODE:-off}
+      XDEBUG_CONFIG: "client_host=${XDEBUG_REMOTE_HOST} client_port=9003 start_with_request=yes idekey=PHPSTORM connect_timeout_ms=10"
+    image: itachiuchixa/peshtaxta:dev
+    volumes:
+      #- ./docker/php/php.ini-development:/etc/php81/conf.d/99_development_config.ini:ro
+      - ./:/var/www
+      - ./docker/php/xdebug.ini:/etc/php81/conf.d/xdebug.ini
+
+  postgres:
+    depends_on:
+      - pgadmin
+    volumes:
+      - ./.db:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: "peshtaxta-pgadmin4"
+    environment:
+      - TZ=${TIMEZONE:-Asia/Tashkent}
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+      - PGADMIN_DISABLE_POSTFIX=1
+    image: dpage/pgadmin4
+    ports:
+      - mode: host
+        target: 80
+        published: ${PGADMIN_PUBLISH_PORT:-8081}
+    restart: unless-stopped
+    #volumes:
+    #  - ./data/pgadmin_servers.json:/pgadmin4/servers.json

@@ -1,0 +1,16 @@
+<?php
+declare(strict_types=1);
+
+return [
+    'doctrine' => [
+        'connection' => [
+            'orm_default' => [
+                'driver'       => null,
+                'driver_class' => null,
+                'params'       => [
+                    'url' => getenv("DATABASE_URL") ?: "postgres://admin:admin@postgres:5432/peshtaxta",
+                ],
+            ],
+        ],
+    ],
+];
